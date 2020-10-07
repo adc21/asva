@@ -1,0 +1,7 @@
+myenv
+.vscode
+__pycache__
+work/*
+.mypy_cache
+.python-version
+.DS_Store
