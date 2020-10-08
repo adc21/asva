@@ -5,3 +5,8 @@ work/*
 .mypy_cache
 .python-version
 .DS_Store
+*.egg-info/
+dist/
+build/
+memo
+*.dev.txt

@@ -13,7 +13,6 @@ from asva.src.utils.calculations import calc_nmb, calc_amplification
 from asva.src.utils.time_step import time_step
 from asva.src.utils.shear_force import fs_from_fi
 
-
 class Analysis:
     def __init__(self, config: ConfigType, case: int):
         self.config = init_config(config)
