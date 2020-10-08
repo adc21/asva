@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
 Config では、解析モデルや解析方法、出力設定を Dict で指定します。
 設定方法は以下の通りです。
-詳細なタイプの確認は[Types](https://github.com/adc21/asva/blob/master/src/Types.py)を確認してください。
+詳細なタイプの確認は[Types](https://github.com/adc21/asva/blob/master/asva/src/Types.py)を確認してください。
 
 ```python
 class ConfigType(TypedDict):
@@ -194,7 +194,3 @@ class ConfigType(TypedDict):
 ## ご使用にあたって
 
 asva は開発中のため、間違っている場合や不正確な場合があります。何かありましたら[issues](https://github.com/adc21/asva/issues)にお知らせください。
-
-## ライセンス
-
-[MIT](https://github.com/adc21/asva/blob/master/LICENSE.md)
