@@ -19,10 +19,23 @@ asva は Python による質点系の振動解析プログラムです。現在�
 
 ## 使い方
 
-### インストールと起動
+### インストールとインポート
 
+#### ・pypiからインストールして使う場合
+```
+pip install asva
+```
+```python
+import asva as ap
+```
+
+#### ・asvaのコードを直接修正しながら使う場合
+以下のようにrequirements.txtをインストールした上で、asvaをフォルダを任意の場所に配置
 ```
 pip install -r path/to/asva/requirements.txt
+```
+```python
+import path.to.asva as ap
 ```
 
 ### コード例
