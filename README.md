@@ -1,6 +1,7 @@
 # asva
 [![Python Versions](https://img.shields.io/pypi/pyversions/asva.svg)](https://pypi.org/project/asva/)
 [![PyPI version](https://img.shields.io/pypi/v/asva)](https://pypi.org/pypi/asva/)
+[![Downloads](https://pepy.tech/badge/asva)](https://pepy.tech/project/asva)
 
 質点系による振動解析プログラム
 
