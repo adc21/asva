@@ -36,8 +36,8 @@ config: ap.AnalysisConfigType = {
     'MI': [100],
     'KI': [
         [{
-            "type": "elastic",
-            "k0": 4000,
+            'type': 'elastic',
+            'k0': 4000,
         }, ],
     ],
 
