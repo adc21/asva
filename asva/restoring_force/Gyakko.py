@@ -1,4 +1,4 @@
-from asva.src.restoring_force.RestoringForce import RestoringForce
+from asva.restoring_force.RestoringForce import RestoringForce
 
 class Gyakko(RestoringForce):
     def __init__(self, k0, a1, a2, f1, f2):

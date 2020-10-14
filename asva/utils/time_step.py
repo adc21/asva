@@ -1,5 +1,5 @@
 """データの読み込み"""
-from asva.src.Types import WaveType, CASESType
+from asva.Types import WaveType, CASESType
 
 def time_step(wave: WaveType, case_conf: CASESType):
     n_div = case_conf['NDIV']

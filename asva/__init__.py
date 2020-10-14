@@ -1,2 +1,2 @@
-from .src.Analysis import Analysis
-from .src.Types import *
+from .Analysis import Analysis
+from .Types import *

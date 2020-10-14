@@ -1,4 +1,4 @@
-from asva.src.restoring_force.RestoringForce import RestoringForce
+from asva.restoring_force.RestoringForce import RestoringForce
 
 class Elastic(RestoringForce):
     def __init__(self, k0):

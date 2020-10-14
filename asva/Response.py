@@ -1,7 +1,7 @@
 """応答の格納・管理"""
 import numpy as np
 
-from asva.src.utils.wave import read_case_wave, divide_wave, add_wave_required_zero
+from asva.utils.wave import read_case_wave, divide_wave, add_wave_required_zero
 
 
 class Response:

@@ -1,19 +1,25 @@
 import os
 import re
 
-from asva.src.Types import ConfigType, AsvaConfigType
+from asva.Types import AnalysisConfigType, AsvaAnalysisConfigType, AmplificationConfigType, AsvaAmplificationConfigType, ExportConfigType, AsvaExportConfigType
 
-additional_config = {
-    'MAX_NK': 0,
+additional_analysis_config = {
+    'TEST': False,                # asva.test.settingsで実行
     'MAX_ND': [],
+}
+
+additional_amplification_config = {
+    'MAX_NK': 0,
+}
+
+additional_export_config = {
     'RESULT_DATA_CASES_DIR': [],
     'RESULT_DATA_DIR': [],
     'RESULT_PLOT_DIR': [],
-    'TEST': False,                # asva.test.settingsで実行
 }
 
-def init_config(user_config: ConfigType) -> AsvaConfigType:
-    config: AsvaConfigType = {**user_config, **additional_config}   # type: ignore
+def init_analysis_config(user_config: AnalysisConfigType) -> AsvaAnalysisConfigType:
+    config: AsvaAnalysisConfigType = {**user_config, **additional_analysis_config}   # type: ignore
 
     # Validate Setting Model
     for i, case in enumerate(config['CASES']):
@@ -28,6 +34,19 @@ def init_config(user_config: ConfigType) -> AsvaConfigType:
             MAX_ND = len(dampers[n]) if len(dampers[n]) > MAX_ND else MAX_ND
         config['MAX_ND'].append(MAX_ND)  # 1層あたりのダンパー種類最大数
 
+    config['G'] = 9.80665
+
+    return config
+
+def init_amplification_config(user_config: AmplificationConfigType) -> AsvaAmplificationConfigType:
+    config: AsvaAmplificationConfigType = {**user_config, **additional_amplification_config}   # type: ignore
+
+    return config
+
+
+def init_export_config(analysis_config: AsvaAnalysisConfigType, user_export_config: ExportConfigType) -> AsvaExportConfigType:
+    config: AsvaExportConfigType = {**user_export_config, **additional_export_config}   # type: ignore
+
     # Result Data
     RESULT_DIR = config['RESULT_DIR'] if re.match(
         r'/$', config['RESULT_DIR']) else config['RESULT_DIR'] + '/'
@@ -35,7 +54,7 @@ def init_config(user_config: ConfigType) -> AsvaConfigType:
     if not os.path.isdir(RESULT_DIR):
         os.mkdir(RESULT_DIR)
 
-    for i, case in enumerate(config['CASES']):
+    for i, case in enumerate(analysis_config['CASES']):
         result_case_dir = RESULT_DIR + '/' + case['NAME']
         config['RESULT_DATA_CASES_DIR'].append(result_case_dir)
         config['RESULT_DATA_DIR'].append(
@@ -49,7 +68,5 @@ def init_config(user_config: ConfigType) -> AsvaConfigType:
             os.mkdir(config['RESULT_DATA_DIR'][i])
         if not os.path.isdir(config['RESULT_PLOT_DIR'][i]):
             os.mkdir(config['RESULT_PLOT_DIR'][i])
-
-    config['G'] = 9.80665
 
     return config

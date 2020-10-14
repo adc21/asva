@@ -1,11 +1,11 @@
 from typing import List, TypedDict, Union, Literal
 
-from asva.src.Types import KIType
-from asva.src.restoring_force.Elastic import Elastic
-from asva.src.restoring_force.Bilinear import Bilinear
-from asva.src.restoring_force.Trilinear import Trilinear
-from asva.src.restoring_force.Gyakko import Gyakko
-from asva.src.restoring_force.Takeda import Takeda
+from asva.Types import KIType
+from asva.restoring_force.Elastic import Elastic
+from asva.restoring_force.Bilinear import Bilinear
+from asva.restoring_force.Trilinear import Trilinear
+from asva.restoring_force.Gyakko import Gyakko
+from asva.restoring_force.Takeda import Takeda
 
 class ElasticType(TypedDict):
     type: Literal["elastic"]

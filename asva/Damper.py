@@ -3,10 +3,10 @@ from typing import Tuple
 
 import numpy as np
 
-from asva.src.dampers import create_damper_instances
-from asva.src.dampers import iRDT_MATRIX, VDA_MATRIX, VDB_MATRIX, MASS_MATRIX, TMD_MATRIX
-from asva.src.utils.damper import damper_param_along_storeys, add_zeros_to_damper_matrix, damper_exists
-from asva.src.utils.delta import delta
+from asva.dampers import create_damper_instances
+from asva.dampers import iRDT_MATRIX, VDA_MATRIX, VDB_MATRIX, MASS_MATRIX, TMD_MATRIX
+from asva.utils.damper import damper_param_along_storeys, add_zeros_to_damper_matrix, damper_exists
+from asva.utils.delta import delta
 
 class Damper:
     def __init__(self, analysis):

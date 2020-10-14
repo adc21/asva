@@ -1,4 +1,4 @@
-from asva.src.restoring_force.RestoringForce import RestoringForce
+from asva.restoring_force.RestoringForce import RestoringForce
 
 class Bilinear(RestoringForce):
     """BILINEAR バイリニア履歴モデルの負荷経路と内力の算出

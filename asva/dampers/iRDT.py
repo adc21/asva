@@ -2,7 +2,7 @@
 from typing import Tuple, TypedDict
 import copy
 import numpy as np
-from asva.src.dampers.Damper import Damper
+from asva.dampers.Damper import Damper
 
 class iRDTType(TypedDict):
     md: float

@@ -1,10 +1,10 @@
 from typing import List, Optional, Union
-from asva.src.dampers.iRDT import *
-from asva.src.dampers.TMD import *
-from asva.src.dampers.MASS import *
-from asva.src.dampers.VDA import *
-from asva.src.dampers.VDB import *
-from asva.src.dampers.Stopper import *
+from asva.dampers.iRDT import *
+from asva.dampers.TMD import *
+from asva.dampers.MASS import *
+from asva.dampers.VDA import *
+from asva.dampers.VDB import *
+from asva.dampers.Stopper import *
 
 DamperClassType = Union[VDA, iRDT, TMD, MASS, VDB, Stopper]
 

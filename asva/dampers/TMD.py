@@ -2,7 +2,7 @@
 """
 from typing import TypedDict, Tuple
 import numpy as np
-from asva.src.dampers.Damper import Damper
+from asva.dampers.Damper import Damper
 
 class TMDType(TypedDict):
     md: float

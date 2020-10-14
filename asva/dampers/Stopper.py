@@ -1,7 +1,7 @@
 """Stopper の抵抗力
 """
 from typing import TypedDict
-from asva.src.dampers.Damper import Damper
+from asva.dampers.Damper import Damper
 
 class StopperType(TypedDict):
     k: float

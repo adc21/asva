@@ -1,5 +1,5 @@
 from typing import Dict, Literal, Union, TypedDict, Optional, List
-from asva.src.dampers import iRDTType, MASSType, VDAType, VDBType, TMDType, StopperType
+from asva.dampers import iRDTType, MASSType, VDAType, VDBType, TMDType, StopperType
 
 
 class WaveType(TypedDict):
@@ -57,19 +57,16 @@ class DamperType(TypedDict):
     d: DamperProperties
 
 
-class ConfigType(TypedDict):
+class AnalysisConfigType(TypedDict):
     # analysis
     BETA: float                 # Newmarkβ法のβ
     BASE_ISOLATION: bool        # 剛性比例型の減衰計算で1層目を無視(C1を0)
-    N_W: int                    # 応答倍率曲線の出力データ数
-    DF: float                   # 応答倍率曲線の出力周波数刻み[Hz]
+
+    # wave
+    WAVES: Dict[str, WaveType]   # 地震波の設定
 
     # case
     CASES: List[CASESType]        # 解析ケースのリスト
-
-    # damper
-    DAMPERS: Dict[str, List[List[DamperType]]]
-                                # ダンパーのリスト
 
     # model
     N_DOF: int                  # 質点数
@@ -80,21 +77,32 @@ class ConfigType(TypedDict):
     MI: List[float]             # 主系の質量[ton]
     KI: List[List[KIType]]      # 主系の剛性[kN/m]
 
-    # result
+    # damper
+    DAMPERS: Dict[str, List[List[DamperType]]]
+                                # ダンパーのリスト
+
+
+class AmplificationConfigType(TypedDict):
+    N_W: int                    # 応答倍率曲線の出力データ数
+    DF: float                   # 応答倍率曲線の出力周波数刻み[Hz]
+
+
+class ExportConfigType(TypedDict):
     RESULT_DIR: str             # 解析結果のディレクトリ名
     RESULT_DATA_DIR_NAME: str   # 解析結果数値データのディレクトリ名
     RESULT_PLOT_DIR_NAME: str   # 解析結果プロットのディレクトリ名
     DATA_PLOT_STORIES: Optional[List[int]]  # 解析結果プロットで出力する層 (配列 or Noneで全指定)
 
-    # wave
-    WAVES: Dict[str, WaveType]   # 地震波の設定
 
-class AsvaConfigType(ConfigType):
-    # init
+class AsvaAnalysisConfigType(AnalysisConfigType):
     G: float                    # 重力加速度
+    TEST: bool
+
+class AsvaAmplificationConfigType(AmplificationConfigType):
     MAX_NK: int
     MAX_ND: List[int]
+
+class AsvaExportConfigType(ExportConfigType):
     RESULT_DATA_CASES_DIR: List[str]
     RESULT_DATA_DIR: List[str]
     RESULT_PLOT_DIR: List[str]
-    TEST: bool

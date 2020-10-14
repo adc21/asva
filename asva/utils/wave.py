@@ -2,7 +2,7 @@
 from typing import TextIO, Optional
 import numpy as np
 
-from asva.src.Types import WaveType, CASESType
+from asva.Types import WaveType, CASESType
 
 #import pandas as pd
 

@@ -3,10 +3,10 @@ from typing import Tuple, List
 import numpy as np
 import numpy.linalg as LA
 
-from asva.src.Types import KIType
-from asva.src.utils.delta import delta
-from asva.src.utils.normalize import normalize_eig
-from asva.src.restoring_force import create_restoring_instances, calc_max_nk # check_elastic
+from asva.Types import KIType
+from asva.utils.delta import delta
+from asva.utils.normalize import normalize_eig
+from asva.restoring_force import create_restoring_instances, calc_max_nk # check_elastic
 
 class Model:
     def __init__(self, n_dof: int, h: float, h_type: int, height: List[float], MI: List[float], KI: List[List[KIType]], I: List[List[float]], base_isolation: bool = False):
