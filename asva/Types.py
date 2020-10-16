@@ -82,7 +82,7 @@ class AnalysisConfigType(TypedDict):
                                 # ダンパーのリスト
 
 
-class AmplificationConfigType(TypedDict):
+class AmplitudeConfigType(TypedDict):
     N_W: int                    # 応答倍率曲線の出力データ数
     DF: float                   # 応答倍率曲線の出力周波数刻み[Hz]
 
@@ -98,7 +98,7 @@ class AsvaAnalysisConfigType(AnalysisConfigType):
     G: float                    # 重力加速度
     TEST: bool
 
-class AsvaAmplificationConfigType(AmplificationConfigType):
+class AsvaAmplitudeConfigType(AmplitudeConfigType):
     MAX_NK: int
     MAX_ND: List[int]
 

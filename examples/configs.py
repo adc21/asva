@@ -70,7 +70,7 @@ config: ap.AnalysisConfigType = {
     },
 }
 
-amp_config: ap.AmplificationConfigType = {
+amp_config: ap.AmplitudeConfigType = {
     'N_W': 5000,
     'DF': 0.001,
 }

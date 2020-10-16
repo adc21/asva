@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>asva &mdash; asva  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1. Installation" href="src/installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home" alt="Documentation Home"> asva
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src/installation.html">1. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/setup_config.html">2. Setup Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/hysteresis.html">3. Hysteresis</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">asva</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>asva</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is <strong>very important</strong> to check accuracy of asva analysis on your own for production use since asva is under development. Please report bugs to <a class="reference external" href="https://github.com/adc21/asva/issues">Github Issues</a>.</p>
+</div>
+<div class="section" id="asva">
+<h1>asva<a class="headerlink" href="#asva" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>asva is vibration analysis library for multi degree of freedom system.
+Response time history and amplitude can be calculated.</p>
+</div>
+<div class="section" id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
+<p>Python 3.8+</p>
+</div>
+<div class="section" id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">asva</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="minimum-code-example">
+<h3>Minimum code example<a class="headerlink" href="#minimum-code-example" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asva</span> <span class="k">as</span> <span class="nn">ap</span>
+
+<span class="n">config</span><span class="p">:</span> <span class="n">ap</span><span class="o">.</span><span class="n">AnalysisConfigType</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="c1"># analysis</span>
+   <span class="s1">&#39;BETA&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span>
+
+   <span class="c1"># case</span>
+   <span class="s1">&#39;CASES&#39;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+            <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;Example&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;WAVE&#39;</span><span class="p">:</span> <span class="s1">&#39;Sample&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;AMP&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;DAMPER&#39;</span><span class="p">:</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;NDIV&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;START_TIME&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;END_TIME&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="p">},</span>
+   <span class="p">],</span>
+
+   <span class="c1"># damper</span>
+   <span class="s1">&#39;DAMPERS&#39;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s1">&#39;None&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[],</span>
+      <span class="p">],</span>
+   <span class="p">},</span>
+
+   <span class="c1"># model</span>
+   <span class="s1">&#39;N_DOF&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+   <span class="s1">&#39;BASE_ISOLATION&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+   <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">,</span>
+   <span class="s1">&#39;H_TYPE&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+   <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+   <span class="p">],</span>
+   <span class="s1">&#39;HEIGHT&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+   <span class="s1">&#39;MI&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span>
+   <span class="s1">&#39;KI&#39;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">[{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;elastic&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;k0&#39;</span><span class="p">:</span> <span class="mi">4000</span><span class="p">,</span>
+      <span class="p">},</span> <span class="p">],</span>
+   <span class="p">],</span>
+
+   <span class="c1"># wave</span>
+   <span class="s1">&#39;WAVES&#39;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s1">&#39;Sample&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="s1">&#39;Sample&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;DT&#39;</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">,</span>
+            <span class="s1">&#39;NDATA&#39;</span><span class="p">:</span> <span class="mi">2688</span><span class="p">,</span>
+            <span class="s1">&#39;TO_METER&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s1">&#39;INPUT_FILE&#39;</span><span class="p">:</span> <span class="s1">&#39;wave/Sample.csv&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;DELIMITER&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;SKIPROWS&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;COL&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;ENCORDING&#39;</span><span class="p">:</span> <span class="s1">&#39;utf&#39;</span><span class="p">,</span>
+      <span class="p">},</span>
+   <span class="p">},</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+   <span class="n">analysis</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">Analysis</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1"># ０は最初のケースを回す。</span>
+   <span class="n">analysis</span><span class="o">.</span><span class="n">analysis</span><span class="p">()</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">resp</span><span class="o">.</span><span class="n">dis</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+   <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src/installation.html">1. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/setup_config.html">2. Setup Config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/hysteresis.html">3. Hysteresis</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="general-indices">
+<h2>General Indices<a class="headerlink" href="#general-indices" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="src/installation.html" class="btn btn-neutral float-right" title="1. Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, adc21
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

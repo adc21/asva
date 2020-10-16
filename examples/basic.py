@@ -4,7 +4,7 @@ from examples.configs import config, amp_config, export_config
 def main():
     analysis = ap.Analysis(config, 0, amp_config, export_config)   # ０は最初のケースを回す。
     analysis.analysis()
-    analysis.amplification()
+    analysis.amplitude()
     analysis.exporter.print()
     analysis.exporter.export()
     analysis.plot.all()

@@ -120,21 +120,19 @@ Config では、解析モデルや解析方法、出力設定を Dict で指定�
 詳細なタイプの確認は[Types](https://github.com/adc21/asva/blob/master/asva/Types.py)を確認してください。
 
 ```python
-class ConfigType(TypedDict):
+class AnalysisConfigType(TypedDict):
     # analysis
     BETA: float                 # Newmarkβ法のβ
+    BASE_ISOLATION: bool        # 剛性比例型の減衰計算で1層目を無視(C1を0)
+
+    # wave
+    WAVES: Dict[str, WaveType]   # 地震波の設定
 
     # case
     CASES: List[CASESType]        # 解析ケースのリスト
 
-    # damper
-    DAMPERS: Dict[str, List[List[DamperType]]]
-                                # ダンパーのリスト
-
     # model
-    G: float                    # 重力加速度
     N_DOF: int                  # 質点数
-    BASE_ISOLATION: bool        # 剛性比例型の減衰計算で1層目を無視(C1を0)
     H: float                    # 主系粘性減衰定数
     H_TYPE: Literal[0, 1]       # 0: 初期剛性比例型　1: 瞬間合成比例型
     I: List[List[float]]        # インプットする外力（NDOF×1）の行列で指定。地震波入力の場合、通常全て1。
@@ -142,8 +140,9 @@ class ConfigType(TypedDict):
     MI: List[float]             # 主系の質量[ton]
     KI: List[List[KIType]]      # 主系の剛性[kN/m]
 
-    # wave
-    WAVES: Dict[str, WaveType]   # 地震波の設定
+    # damper
+    DAMPERS: Dict[str, List[List[DamperType]]]
+                                # ダンパーのリスト
 ```
 
 ## 履歴則

@@ -1,0 +1,33 @@
+.. asva documentation master file, created by
+   sphinx-quickstart on Fri Oct 16 09:53:05 2020.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+.. important::
+
+    It is **very important** to check accuracy of asva analysis on your own for production use since asva is under development. Please report bugs to `Github Issues <https://github.com/adc21/asva/issues>`_.
+
+===========================================================
+asva: Response Analysis for Multi Degree of Freedom System
+===========================================================
+
+
+General Indices
+===============
+
+.. toctree::
+   :maxdepth: 1
+   :numbered:
+   :caption: Contents:
+
+   src/installation
+   src/hysteresis
+
+
+
+General Indices
+===============
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

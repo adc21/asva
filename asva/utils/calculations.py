@@ -18,7 +18,7 @@ def calc_nmb(F, fd_m, M: np.ndarray, C: np.ndarray, K: np.ndarray, acc_1, vel_1,
     return acc_2, vel_2, dis_2
 
 
-def calc_amplification(M: np.ndarray, C: np.ndarray, K: np.ndarray, I: np.ndarray, omega: float, absolute: bool =False) -> Tuple[float]:
+def calc_amplitude(M: np.ndarray, C: np.ndarray, K: np.ndarray, I: np.ndarray, omega: float, absolute: bool =False) -> Tuple[float]:
     """
     応答倍率の計算
     """

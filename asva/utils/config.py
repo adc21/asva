@@ -1,14 +1,14 @@
 import os
 import re
 
-from asva.Types import AnalysisConfigType, AsvaAnalysisConfigType, AmplificationConfigType, AsvaAmplificationConfigType, ExportConfigType, AsvaExportConfigType
+from asva.Types import AnalysisConfigType, AsvaAnalysisConfigType, AmplitudeConfigType, AsvaAmplitudeConfigType, ExportConfigType, AsvaExportConfigType
 
 additional_analysis_config = {
     'TEST': False,                # asva.test.settingsで実行
     'MAX_ND': [],
 }
 
-additional_amplification_config = {
+additional_amplitude_config = {
     'MAX_NK': 0,
 }
 
@@ -38,8 +38,8 @@ def init_analysis_config(user_config: AnalysisConfigType) -> AsvaAnalysisConfigT
 
     return config
 
-def init_amplification_config(user_config: AmplificationConfigType) -> AsvaAmplificationConfigType:
-    config: AsvaAmplificationConfigType = {**user_config, **additional_amplification_config}   # type: ignore
+def init_amplitude_config(user_config: AmplitudeConfigType) -> AsvaAmplitudeConfigType:
+    config: AsvaAmplitudeConfigType = {**user_config, **additional_amplitude_config}   # type: ignore
 
     return config
 

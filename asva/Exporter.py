@@ -104,7 +104,7 @@ class Exporter:
         print(self.analysis.case_name, 'exporting...')
         self.export_result_outline()
 
-        # amplification
+        # amplitude
         if self.analysis.amp_done:
             amp_acc_dict = {}
             amp_a_acc_dict = {}

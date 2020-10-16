@@ -10,9 +10,9 @@ from asva.Damper import Damper
 from asva.Model import Model
 from asva.Plot import Plot
 from asva.Response import Response
-from asva.Types import AnalysisConfigType, AmplificationConfigType, ExportConfigType, AsvaAmplificationConfigType
-from asva.utils.config import init_analysis_config, init_amplification_config, init_export_config
-from asva.utils.calculations import calc_nmb, calc_amplification
+from asva.Types import AnalysisConfigType, AmplitudeConfigType, ExportConfigType, AsvaAmplitudeConfigType
+from asva.utils.config import init_analysis_config, init_amplitude_config, init_export_config
+from asva.utils.calculations import calc_nmb, calc_amplitude
 from asva.utils.time_step import time_step
 from asva.utils.shear_force import fs_from_fi
 
@@ -21,12 +21,12 @@ class Analysis:
             self,
             config: AnalysisConfigType,
             case: int,
-            amplification_config: Optional[AmplificationConfigType] = None,
+            amplitude_config: Optional[AmplitudeConfigType] = None,
             export_config: Optional[ExportConfigType] = None,
         ):
 
         self.config = init_analysis_config(config)
-        self.amplification_config = init_amplification_config(amplification_config) if amplification_config else None
+        self.amplitude_config = init_amplitude_config(amplitude_config) if amplitude_config else None
         self.export_config = init_export_config(self.config, export_config) if export_config else None
         self.case = case
         self.case_conf = self.config['CASES'][self.case]
@@ -66,7 +66,7 @@ class Analysis:
         self.plot = Plot(self)
 
     def reset(self):
-        self.__init__(self.config, self.case, self.amplification_config, self.export_config) # type: ignore
+        self.__init__(self.config, self.case, self.amplitude_config, self.export_config) # type: ignore
 
     # 時刻歴応答解析全ステップの計算
     def analysis(self):
@@ -157,25 +157,25 @@ class Analysis:
         return np.array([self.resp.a_acc_max[1], self.resp.vel_max[1], self.resp.dis_max[1], self.resp.fd_max[1]], dtype=np.float32)
 
     # 応答倍率計算
-    def amplification(self):
-        if not self.amplification_config:
-            raise ValueError('応答倍率の計算には、AmplificationConfigを設定してください。')
-        self.amplification_config: AsvaAmplificationConfigType = self.amplification_config # todo: check
+    def amplitude(self):
+        if not self.amplitude_config:
+            raise ValueError('応答倍率の計算には、AmplitudeConfigを設定してください。')
+        self.amplitude_config: AsvaAmplitudeConfigType = self.amplitude_config # todo: check
 
         M, C, K, I = self.damper.amp_matrix()
 
-        wsize = self.amplification_config['N_W']
+        wsize = self.amplitude_config['N_W']
         size = np.size(M, 0)
         self.resp.frequency: np.ndarray = np.array([])
         self.resp.amp_acc = np.zeros((wsize, size))
         self.resp.amp_a_acc = np.zeros((wsize, size))
 
         for i in range(wsize):
-            f = (i+1)*self.amplification_config['DF']
+            f = (i+1)*self.amplitude_config['DF']
             omega = f*2*np.pi
 
             self.resp.frequency = np.append(self.resp.frequency, f)
-            self.resp.amp_acc[i, :] = calc_amplification(M, C, K, I, omega, False)
-            self.resp.amp_a_acc[i, :] = calc_amplification(M, C, K, I, omega, True)
+            self.resp.amp_acc[i, :] = calc_amplitude(M, C, K, I, omega, False)
+            self.resp.amp_a_acc[i, :] = calc_amplitude(M, C, K, I, omega, True)
 
         self.amp_done = True
