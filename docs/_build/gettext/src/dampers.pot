@@ -1,0 +1,77 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2020, adc21
+# This file is distributed under the same license as the asva package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: asva \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-19 11:57+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../src/dampers.rst:3
+msgid "Dampers"
+msgstr ""
+
+#: ../../src/dampers.rst:5
+msgid "Dampers can be defined and set to ``AnalysisConfig`` like below."
+msgstr ""
+
+#: ../../src/dampers.rst:7
+msgid "You can register several dampers in config and choose it in ``CASES``."
+msgstr ""
+
+#: ../../src/dampers.rst:47
+msgid "MASS Damper"
+msgstr ""
+
+#: ../../src/dampers.rst:49
+msgid "``type`` MASS"
+msgstr ""
+
+#: ../../src/dampers.rst:57
+msgid "Stopper"
+msgstr ""
+
+#: ../../src/dampers.rst:59
+msgid "``type`` Stopper"
+msgstr ""
+
+#: ../../src/dampers.rst:68
+msgid "Viscous Damper (CV^α)"
+msgstr ""
+
+#: ../../src/dampers.rst:70
+msgid "``type`` VDA"
+msgstr ""
+
+#: ../../src/dampers.rst:81
+msgid "Viscous Damper (Bilinear)"
+msgstr ""
+
+#: ../../src/dampers.rst:83
+msgid "``type`` VDB"
+msgstr ""
+
+#: ../../src/dampers.rst:94
+msgid "TMD"
+msgstr ""
+
+#: ../../src/dampers.rst:96
+msgid "``type`` TMD"
+msgstr ""
+
+#: ../../src/dampers.rst:106
+msgid "iRDT"
+msgstr ""
+
+#: ../../src/dampers.rst:108
+msgid "``type`` iRDT"
+msgstr ""

@@ -12,10 +12,7 @@ asva
 ====
 
 
-Overview
-=========
-
-asva is vibration analysis library for multi degree of freedom system.
+asva is a package to simulate vibration response of multi degree of freedom system subjected to earthquakes.
 Response time history and amplitude can be calculated.
 
 
@@ -111,15 +108,13 @@ Minimum code example
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :numbered:
    :caption: Contents:
 
-   src/installation
    src/setup_config
-   src/hysteresis
-
-
+   src/hysteretic_models
+   src/dampers
 
 General Indices
 ===============

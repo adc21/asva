@@ -1,0 +1,42 @@
+================
+Hysteretic Model
+================
+
+Elastic
+=======
+
+.. code::
+
+    class ElasticType(TypedDict):
+        type: Literal["elastic"]
+        k0: float                       # 初期剛性[kN/m]
+
+Bilinear
+========
+
+.. code::
+
+    class BilinearType(TypedDict):
+        type: Literal["bilinear"]
+        k0: float                       # 初期剛性[kN/m]
+        a1: float                       # 降伏後剛性低下率[-]
+        f1: float                       # 降伏荷重[kN]
+
+Trilinear, Gyakko, Takeda
+=========================
+
+.. code::
+
+    class TrilinearType(TypedDict):
+        type: Literal["gyakko", "takeda", "trilinear"]
+        k0: float                       # 初期剛性[kN/m]
+        a1: float                       # 降伏後剛性低下率1[-]
+        a2: float                       # 降伏後剛性低下率2[-]
+        f1: float                       # 降伏荷重1[kN]
+        f2: float                       # 降伏荷重2[kN]
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+

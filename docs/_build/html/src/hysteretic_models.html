@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. Hysteretic Models &mdash; asva  ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="3. Dampers" href="dampers.html" />
+    <link rel="prev" title="1. Setup Config" href="setup_config.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> asva
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup_config.html">1. Setup Config</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Hysteretic Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#elastic">2.1. Elastic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bilinear">2.2. Bilinear</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#trilinear-gyakko-takeda">2.3. Trilinear, Gyakko, Takeda</a><ul class="simple">
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dampers.html">3. Dampers</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">asva</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">2. </span>Hysteretic Models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/src/hysteretic_models.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="hysteretic-models">
+<h1><span class="section-number">2. </span>Hysteretic Models<a class="headerlink" href="#hysteretic-models" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>Hysteretic models can be defined and set to <code class="docutils literal notranslate"><span class="pre">AnalysisConfig</span></code> like below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example</span>
+<span class="kn">import</span> <span class="nn">asva</span> <span class="k">as</span> <span class="nn">ap</span>
+
+<span class="n">config</span><span class="p">:</span> <span class="n">ap</span><span class="o">.</span><span class="n">AnalysisConfigType</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="s1">&#39;KI&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">[</span> <span class="c1"># first storey</span>
+            <span class="p">{</span> <span class="c1"># first hysteresis</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;elastic&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;k0&#39;</span><span class="p">:</span> <span class="mi">4000</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>  <span class="c1"># second hysteresis</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;elastic&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;k0&#39;</span><span class="p">:</span> <span class="mi">4000</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+        <span class="p">[</span> <span class="c1"># second storey</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;elastic&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;k0&#39;</span><span class="p">:</span> <span class="mi">4000</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+        <span class="o">...</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="o">...</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="elastic">
+<h2><span class="section-number">2.1. </span>Elastic<a class="headerlink" href="#elastic" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ElasticType</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;elastic&quot;</span><span class="p">]</span>
+    <span class="n">k0</span><span class="p">:</span> <span class="nb">float</span>                       <span class="c1"># 初期剛性[kN/m]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bilinear">
+<h2><span class="section-number">2.2. </span>Bilinear<a class="headerlink" href="#bilinear" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BilinearType</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;bilinear&quot;</span><span class="p">]</span>
+    <span class="n">k0</span><span class="p">:</span> <span class="nb">float</span>                       <span class="c1"># 初期剛性[kN/m]</span>
+    <span class="n">a1</span><span class="p">:</span> <span class="nb">float</span>                       <span class="c1"># 降伏後剛性低下率[-]</span>
+    <span class="n">f1</span><span class="p">:</span> <span class="nb">float</span>                       <span class="c1"># 降伏荷重[kN]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="trilinear-gyakko-takeda">
+<h2><span class="section-number">2.3. </span>Trilinear, Gyakko, Takeda<a class="headerlink" href="#trilinear-gyakko-takeda" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TrilinearType</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;gyakko&quot;</span><span class="p">,</span> <span class="s2">&quot;takeda&quot;</span><span class="p">,</span> <span class="s2">&quot;trilinear&quot;</span><span class="p">]</span>
+    <span class="n">k0</span><span class="p">:</span> <span class="nb">float</span>                       <span class="c1"># 初期剛性[kN/m]</span>
+    <span class="n">a1</span><span class="p">:</span> <span class="nb">float</span>                       <span class="c1"># 降伏後剛性低下率1[-]</span>
+    <span class="n">a2</span><span class="p">:</span> <span class="nb">float</span>                       <span class="c1"># 降伏後剛性低下率2[-]</span>
+    <span class="n">f1</span><span class="p">:</span> <span class="nb">float</span>                       <span class="c1"># 降伏荷重1[kN]</span>
+    <span class="n">f2</span><span class="p">:</span> <span class="nb">float</span>                       <span class="c1"># 降伏荷重2[kN]</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dampers.html" class="btn btn-neutral float-right" title="3. Dampers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="setup_config.html" class="btn btn-neutral float-left" title="1. Setup Config" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; 著作権 2020, adc21
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
