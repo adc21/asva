@@ -5,7 +5,7 @@
 
 .. important::
 
-    It is **very important** to check accuracy of asva analysis on your own for production use since asva is under development. Please report bugs to `Github Issues <https://github.com/adc21/asva/issues>`_.
+   It is **very important** to check accuracy of asva analysis on your own for production use since asva is under development. Please report bugs to `Github Issues <https://github.com/adc21/asva/issues>`_.
 
 ====
 asva

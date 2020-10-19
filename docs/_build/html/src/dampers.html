@@ -1,13 +1,13 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="ja" >
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>3. Dampers &mdash; asva  ドキュメント</title>
+  <title>3. Dampers &mdash; asva  documentation</title>
   
 
   
@@ -30,13 +30,12 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/language_data.js"></script>
-        <script src="../_static/translations.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
     
-    <link rel="index" title="索引" href="../genindex.html" />
-    <link rel="search" title="検索" href="../search.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="2. Hysteretic Models" href="hysteretic_models.html" /> 
 </head>
 
@@ -163,7 +162,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="dampers">
-<h1><span class="section-number">3. </span>Dampers<a class="headerlink" href="#dampers" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<h1><span class="section-number">3. </span>Dampers<a class="headerlink" href="#dampers" title="Permalink to this headline">¶</a></h1>
 <p>Dampers can be defined and set to <code class="docutils literal notranslate"><span class="pre">AnalysisConfig</span></code> like below.</p>
 <p>You can register several dampers in config and choose it in <code class="docutils literal notranslate"><span class="pre">CASES</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example</span>
@@ -201,7 +200,7 @@
 </pre></div>
 </div>
 <div class="section" id="mass-damper">
-<h2><span class="section-number">3.1. </span>MASS Damper<a class="headerlink" href="#mass-damper" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">3.1. </span>MASS Damper<a class="headerlink" href="#mass-damper" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">type</span></code> MASS</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MASSType</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
     <span class="n">m</span><span class="p">:</span> <span class="nb">float</span>
@@ -209,7 +208,7 @@
 </div>
 </div>
 <div class="section" id="stopper">
-<h2><span class="section-number">3.2. </span>Stopper<a class="headerlink" href="#stopper" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">3.2. </span>Stopper<a class="headerlink" href="#stopper" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">type</span></code> Stopper</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">StopperType</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
     <span class="n">k</span><span class="p">:</span> <span class="nb">float</span>
@@ -218,7 +217,7 @@
 </div>
 </div>
 <div class="section" id="viscous-damper-cv">
-<h2><span class="section-number">3.3. </span>Viscous Damper (CV^α)<a class="headerlink" href="#viscous-damper-cv" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">3.3. </span>Viscous Damper (CV^α)<a class="headerlink" href="#viscous-damper-cv" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">type</span></code> VDA</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">VDAType</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
     <span class="n">cd</span><span class="p">:</span> <span class="nb">float</span>
@@ -229,7 +228,7 @@
 </div>
 </div>
 <div class="section" id="viscous-damper-bilinear">
-<h2><span class="section-number">3.4. </span>Viscous Damper (Bilinear)<a class="headerlink" href="#viscous-damper-bilinear" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">3.4. </span>Viscous Damper (Bilinear)<a class="headerlink" href="#viscous-damper-bilinear" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">type</span></code> VDB</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">VDBType</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
     <span class="n">c1</span><span class="p">:</span> <span class="nb">float</span>
@@ -240,7 +239,7 @@
 </div>
 </div>
 <div class="section" id="tmd">
-<h2><span class="section-number">3.5. </span>TMD<a class="headerlink" href="#tmd" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">3.5. </span>TMD<a class="headerlink" href="#tmd" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">type</span></code> TMD</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TMDType</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
     <span class="n">md</span><span class="p">:</span> <span class="nb">float</span>
@@ -250,7 +249,7 @@
 </div>
 </div>
 <div class="section" id="irdt">
-<h2><span class="section-number">3.6. </span>iRDT<a class="headerlink" href="#irdt" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<h2><span class="section-number">3.6. </span>iRDT<a class="headerlink" href="#irdt" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">type</span></code> iRDT</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">iRDTType</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
     <span class="n">md</span><span class="p">:</span> <span class="nb">float</span>
@@ -285,7 +284,7 @@
   <div role="contentinfo">
     <p>
         
-        &copy; 著作権 2020, adc21
+        &copy; Copyright 2020, adc21
 
     </p>
   </div>

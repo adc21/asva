@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../src/setup_config.rst:3
 msgid "Setup Config"
-msgstr ""
+msgstr "Configの設定"
 
 #: ../../src/setup_config.rst:5
 msgid ""
@@ -28,6 +28,7 @@ msgid ""
 "<https://github.com/adc21/asva/blob/master/asva/Types.py>`_. You can use "
 "them as shown below if needed."
 msgstr ""
+"asvaでは、Configを設定してAnalysisクラスに渡す必要があります。"
 
 #: ../../src/setup_config.rst:30
 msgid "Analysis Config"
