@@ -1,7 +1,19 @@
 import copy
 
 class RestoringForce:
-    def __init__(self):
+    def __init__(self, n1: int, n2: int, k0: float):
+        if n1 == n2:
+            raise ValueError('n1 and n2 must not be same number.')
+
+        if n1 < n2:
+            self.n1 = n1
+            self.n2 = n2
+        else:
+            self.n1 = n2
+            self.n2 = n1
+
+        self.k0 = k0
+        self.k = self.k0
         self.force: float = 0
         self.dis: float = 0
         self.dis0: float = 0

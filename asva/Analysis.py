@@ -33,12 +33,19 @@ class Analysis:
         self.case_name = self.case_conf['NAME']
         self.wave = self.config['WAVES'][self.case_conf['WAVE']]
         self.amp_done = False
-        self.model = Model(self.config['N_DOF'], self.config['H'], self.config['H_TYPE'], self.config['HEIGHT'], self.config['MI'], self.config['KI'], self.config['I'], self.config['BASE_ISOLATION'])
+        self.model = Model(self.config['H'], self.config['H_TYPE'], self.config['MI'], self.config['KI'], self.config['I'], self.config['BASE_ISOLATION'])
         self.dampers = self.config['DAMPERS'][self.case_conf["DAMPER"]]
         self.n_div, self.dt, self.ddt, self.start_time, self.end_time, self.resp_start_step, self.resp_end_step, self.resp_n_steps, self.start_step, self.end_step, self.n_steps = time_step(self.wave, self.case_conf)
         self.steps = 0  # 試行数
         self.beta = self.config['BETA']
         self.max_nd = self.config['MAX_ND'][self.case]  # 1層あたりのダンパー種類最大数
+
+        # for iterations
+        """
+        self.gamma = 1 / 2
+        self.c0 = 1 / (self.beta * self.ddt**2)
+        self.c3 = self.gamma / (self.beta * self.ddt)
+        """
 
         self.resp = Response(self)
         self.a_acc_0 = np.zeros((self.model.n_dof, 1))
@@ -50,15 +57,19 @@ class Analysis:
         self.vel = np.zeros((self.model.n_dof, 1))
         self.dis = np.zeros((self.model.n_dof, 1))
         self.fu = np.zeros((self.model.n_dof, 1))
-        self.fs = np.zeros((self.model.n_dof, 1))
+        self.rat_fu = np.zeros((self.model.n_dof, 1))
+        self.fi = np.zeros((self.model.n_dof, 1))   # 慣性力
+        self.fs = np.zeros((self.model.n_dof, 1))   # 層せん断力
         self.cum_dis = np.zeros((self.model.n_dof, 1))  # 累積変位
         self.d_a_acc = np.zeros((self.model.n_dof, 1))
         self.d_acc = np.zeros((self.model.n_dof, 1))
         self.d_vel = np.zeros((self.model.n_dof, 1))
         self.d_dis = np.zeros((self.model.n_dof, 1))
 
+        self.acc_00 = self.resp.acc_00[0]
         self.d_acc_00 = self.resp.acc_00[0]
-        self.f_0 = np.dot(self.model.M, (-1) * self.model.I * self.d_acc_00)  # 外力項
+        self.f_0 = np.dot(self.model.M, (-1) * self.model.I * self.acc_00)  # 外力項
+        self.d_f_0 = np.dot(self.model.M, (-1) * self.model.I * self.d_acc_00)  # 外力項
         self.damper = Damper(self)
 
         self.exporter = Exporter(self)
@@ -88,11 +99,14 @@ class Analysis:
         assert(t <= self.n_steps - 1)
 
         if t != 0:
+            self.acc_00 = self.resp.acc_00[t]
             self.d_acc_00 = (self.resp.acc_00[t] - self.resp.acc_00[t-1])
 
-        self.d_acc, self.d_vel, self.d_dis = calc_nmb(self.f_0, self.damper.fd_m, self.model.M, self.model.C, self.model.K,
-                                                      self.d_acc, self.d_vel, self.d_dis, self.beta,
-                                                      self.ddt)
+        self.f_0 = np.dot(self.model.M, (-1) * self.model.I * self.acc_00)
+        self.d_f_0 = np.dot(self.model.M, (-1) * self.model.I * self.d_acc_00)
+        self.d_acc, self.d_vel, self.d_dis = calc_nmb(self.d_f_0, self.damper.d_fd_m, self.model.M, self.model.C, self.model.K,
+                                                    self.d_acc, self.d_vel, self.d_dis, self.beta,
+                                                    self.ddt)
 
         self.d_a_acc = self.d_acc + self.d_acc_00
         self.acc += self.d_acc
@@ -100,21 +114,47 @@ class Analysis:
         self.dis += self.d_dis
         self.a_acc += self.d_a_acc
 
-        Cp = copy.copy(self.model.C)
-        Kp = copy.copy(self.model.K)
-        self.model.update_matrix(self.dis, analysis=True)
+        self.model.update_matrix(self.dis)
+        self.damper.update_damper_force_matrix(action)  # self.damper.d_fd_mを更新
 
-        fu_temp = np.dot((Cp - self.model.C), self.d_vel) + np.dot((Kp - self.model.K), self.d_dis)
-        self.f_0 = np.dot(self.model.M, (-1) * self.model.I * self.d_acc_00) + fu_temp
-        # with np.errstate(divide='ignore', invalid='ignore'):
-        #     UF = np.abs(fu_temp/self.f_0)
-        #     MAX_UF = np.nanmax(UF[UF != np.inf])
+        self.fu = np.dot(self.model.M, self.acc) + np.dot(self.model.C, self.vel) + self.model.Fk + self.damper.fd_m - self.f_0
+
+        # for iterations
+        """
+        succeed = False
+        n_iteration = 0
+        while not succeed and n_iteration <= 10:
+            if self.fu_is_valid():
+                succeed = True
+            else:
+                Ke = self.model.M * self.c0 + self.model.C * self.c3 + self.model.K + self.damper.fd_m / self.dis
+
+                a_dis = -np.dot(np.linalg.inv(Ke), self.fu)
+                a_vel = self.c3 * a_dis
+                a_acc = self.c0 * a_dis
+
+                self.d_dis += a_dis
+                self.d_vel += a_vel
+                self.d_acc += a_acc
+                self.d_a_acc = self.d_acc + self.d_acc_00
+
+                self.a_acc = self.a_acc_0 + self.d_a_acc
+                self.acc = self.acc_0 + self.d_acc
+                self.vel = self.vel_0 + self.d_vel
+                self.dis = self.dis_0 + self.d_dis
+
+                self.model.update_matrix()
+                self.damper.update_damper_force_matrix(action)
+                self.fu = np.dot(self.model.M, self.acc) + np.dot(self.model.C, self.vel) + self.model.Fk + self.damper.fd_m - self.f_0
+
+                n_iteration += 1
+        """
 
         self.cum_dis = self.cum_dis + abs(self.d_dis)
         d_fi = np.dot(self.model.K, self.d_dis) + np.dot(self.model.C, self.d_vel)  # 慣性力
+        self.fi += d_fi
         d_fs = fs_from_fi(d_fi)
         self.fs += d_fs
-        self.damper.update_damper_force_matrix(action)  # self.damper.fd_mを更新
 
         if t % n_div == 0:
             rt = t // n_div
@@ -122,14 +162,32 @@ class Analysis:
             self.resp.acc[rt, :] = np.reshape(self.acc, n_dof)
             self.resp.vel[rt, :] = np.reshape(self.vel, n_dof)
             self.resp.dis[rt, :] = np.reshape(self.dis, n_dof)
-            self.resp.fu[rt, :] = np.reshape(fu_temp, n_dof)
+            self.resp.fu[rt, :] = np.reshape(self.fu, n_dof)
+            self.resp.rat_fu[rt, :] = np.reshape(self.rat_fu, n_dof)
             self.resp.cum_dis[rt, :] = np.reshape(self.cum_dis, n_dof)
             self.resp.fs[rt, :] = np.reshape(self.fs, n_dof)
             self.resp.fd[rt, :, :] = self.damper.fd
-            self.resp.fk[rt, :, :] = self.model.fk
+            self.resp.fk[rt, :] = self.model.fk
 
         self.steps += 1
         return self.reward
+
+    # for iterations
+    """
+    def fu_is_valid(self):
+        # with np.errstate(divide='ignore', invalid='ignore'):
+        rat_fu_temp = np.abs(self.fu / self.f_0)
+        rat_fu_temp[np.isnan(rat_fu_temp)] = 0
+        rat_fu_temp[np.isinf(rat_fu_temp)] = 0
+
+        self.rat_fu = rat_fu_temp
+        max_rat_fu = np.max(self.rat_fu)
+        valid = max_rat_fu < 0.01
+        if not valid:
+            print(self.f_0, self.rat_fu)
+
+        return max_rat_fu < 0.1
+    """
 
     # 時刻歴応答解析の終了
     @property
@@ -166,7 +224,8 @@ class Analysis:
 
         wsize = self.amplitude_config['N_W']
         size = np.size(M, 0)
-        self.resp.frequency: np.ndarray = np.array([])
+        print(M)
+        self.model.amp_size = size
         self.resp.amp_acc = np.zeros((wsize, size))
         self.resp.amp_a_acc = np.zeros((wsize, size))
 

@@ -12,7 +12,8 @@ class Damper:
     def __init__(self, analysis):
         self.analysis = analysis
         self.cum_dis = np.zeros((self.analysis.model.n_dof, 1))  # 累積変位
-        self.fd_m = np.zeros((self.analysis.model.n_dof, 1))  # 外力項に加えるダンパー力増分マトリクス
+        self.fd_m = np.zeros((self.analysis.model.n_dof, 1))  # ダンパー力マトリクス
+        self.d_fd_m = np.zeros((self.analysis.model.n_dof, 1))  # 外力項に加えるダンパー力増分マトリクス
 
         self.fd0 = np.zeros((self.analysis.model.n_dof, self.analysis.max_nd))  # 各層前ステップのダンパー力
         self.fd = np.zeros((self.analysis.model.n_dof, self.analysis.max_nd))  # 各層現ステップのダンパー力
@@ -34,9 +35,11 @@ class Damper:
 
         for n in range(self.analysis.model.n_dof):
             if n == self.analysis.model.n_dof-1:
-                self.fd_m[n, 0] = np.sum(d_fd[n, :]) - np.sum(d_f[n, :])
+                self.fd_m[n, 0] = np.sum(self.fd[n, :]) - np.sum(self.f[n, :])
+                self.d_fd_m[n, 0] = np.sum(d_fd[n, :]) - np.sum(d_f[n, :])
             else:
-                self.fd_m[n, 0] = np.sum(d_fd[n, :]) - np.sum(d_fd[n+1, :]) - np.sum(d_f[n, :])
+                self.fd_m[n, 0] = np.sum(self.fd[n, :]) - np.sum(self.fd[n+1, :]) - np.sum(self.f[n, :])
+                self.d_fd_m[n, 0] = np.sum(d_fd[n, :]) - np.sum(d_fd[n+1, :]) - np.sum(d_f[n, :])
 
     def damper_force(self):
         self.fd0 = copy.copy(self.fd)
@@ -108,8 +111,8 @@ class Damper:
 
 
         # マトリクスの大きさが変化する場合こちらで計算
-        M, C, K, I, TMD_C_matrix, TMD_K_matrix = TMD_MATRIX(n_dof, M, C, K, I, TMD_md_params, TMD_cd_params, TMD_kd_params)
-        M, C, K, I, iRDT_matrix = iRDT_MATRIX(n_dof, M, C, K, I, iRDT_md_params, iRDT_cd_params, iRDT_kb_params)
+        M, C, K, I, TMD_C_matrix, TMD_K_matrix = TMD_MATRIX(n_dof, M, C, K, I, TMD_md_params, TMD_cd_params, TMD_kd_params) if damper_exists(n_dof, 'TMD', self.analysis.dampers) else M, C, K, I, np.zeros(np.shape(M)), np.zeros(np.shape(M))
+        M, C, K, I, iRDT_matrix = iRDT_MATRIX(n_dof, M, C, K, I, iRDT_md_params, iRDT_cd_params, iRDT_kb_params) if damper_exists(n_dof, 'iRDT', self.analysis.dampers) else M, C, K, I, np.zeros(np.shape(M))
         size = np.size(M, 0)
 
         # マトリクスを拡張する前に計算したダンパーマトリクスにはゼロを追加して拡張し直す

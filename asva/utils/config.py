@@ -20,17 +20,18 @@ additional_export_config = {
 
 def init_analysis_config(user_config: AnalysisConfigType) -> AsvaAnalysisConfigType:
     config: AsvaAnalysisConfigType = {**user_config, **additional_analysis_config}   # type: ignore
+    N_DOF = len(config['MI'])
 
     # Validate Setting Model
     for i, case in enumerate(config['CASES']):
         dampers = config['DAMPERS'][config['CASES'][i]["DAMPER"]]
-        if not (config['N_DOF'] == len(config['MI']) and config['N_DOF'] == len(config['KI']) and config['N_DOF'] == len(dampers)):
+        if not (N_DOF <= len(config['KI']) and N_DOF == len(dampers)):
             raise ValueError(f"警告：config.model.DAMPER{i}番目mf,kf,dampersの配列長さはNと同じである必要があります。")
 
     MAX_ND = 0
     for i, case in enumerate(config['CASES']):
         dampers = config['DAMPERS'][config['CASES'][i]["DAMPER"]]
-        for n in range(config['N_DOF']):
+        for n in range(N_DOF):
             MAX_ND = len(dampers[n]) if len(dampers[n]) > MAX_ND else MAX_ND
         config['MAX_ND'].append(MAX_ND)  # 1層あたりのダンパー種類最大数
 

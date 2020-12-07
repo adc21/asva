@@ -2,11 +2,10 @@ from asva.restoring_force.RestoringForce import RestoringForce
 
 
 class Takeda(RestoringForce):
-    def __init__(self, k0, a1, a2, fy1, fy2):
-        super().__init__()
+    def __init__(self, n1: int, n2: int, k0: float, a1: float, a2: float, fy1: float, fy2: float):
+        super().__init__(n1, n2, k0)
         self.state = 0     # 状態
 
-        self.k0 = k0
         self.a1 = a1
         self.a2 = a2
         self.fy1 = fy1
@@ -30,7 +29,7 @@ class Takeda(RestoringForce):
         self.gamma = 0.4        # γ
         self.kp = (self.fy1 + self.fy2) / (self.disy1 + self.disy2)
 
-    def step(self, dis: float) -> float:
+    def step(self, dis: float) -> None:
         # init
         self.init_step(dis)
 
@@ -99,7 +98,6 @@ class Takeda(RestoringForce):
 
         # end
         self.end_step(self.k)
-        return self.k
 
     def takeda_0(self):
         if self.dis < -self.disy1:

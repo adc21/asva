@@ -4,24 +4,22 @@ import numpy as np
 import numpy.linalg as LA
 
 from asva.Types import KIType
-from asva.utils.delta import delta
 from asva.utils.normalize import normalize_eig
-from asva.restoring_force import create_restoring_instances, calc_max_nk # check_elastic
+from asva.restoring_force import create_restoring_instances
 
 class Model:
-    def __init__(self, n_dof: int, h: float, h_type: int, height: List[float], MI: List[float], KI: List[List[KIType]], I: List[List[float]], base_isolation: bool = False):
-        self.n_dof = n_dof
+    def __init__(self, h: float, h_type: int, MI: List[float], KI: List[KIType], I: List[List[float]], base_isolation: bool = False):
+        self.n_dof = len(MI)
+        self.amp_size = self.n_dof
         self.h = h
         self.h_type = h_type
-        self.height = height
+        assert(self.h_type == 0 or self.h_type == 1)
 
-        self.max_nk = calc_max_nk(KI)
         self.base_isolation = base_isolation
         self.KI = KI
 
-        self.k = create_restoring_instances(self.n_dof, self.max_nk, self.KI)
-        self.fk = np.zeros((self.n_dof, self.max_nk))  # 各層現ステップのダンパー力
-        # self.elastic = check_elastic(self.n_dof, self.max_nk, self.KI)
+        self.ki = create_restoring_instances(self.KI)
+        self.fk = np.zeros(len(self.KI))  # 各層各要素現ステップの復原力
 
         self.MF = np.array(MI)
         self.Mt = np.sum(self.MF)
@@ -52,51 +50,18 @@ class Model:
             if abs(np.sum(self.vb[:, i]) - 1) > 1e-5:   # 各次数の刺激関数の和が１
                 raise ValueError('固有値解析が正しくない可能性があります。')
 
-    def KF(self, D=np.array([]), analysis=False):
-        KF = np.zeros((self.n_dof))
-        KF_I = np.zeros((self.n_dof, self.max_nk))
-
-        for i in range(self.n_dof):
-            D_s = delta(np.reshape(D, self.n_dof)) if len(D) > 0 else D  # 層間変位
-
-            for ii in range(self.max_nk):
-                try:
-                    _ = self.KI[i][ii]
-                except IndexError:
-                    continue
-
-                # 弾性
-                if not len(D) > 0 or not analysis:
-                    KF_I[i, ii] = self.KI[i][ii]["k0"]
-                else:
-                    KF_I[i, ii] = self.k[i][ii].step(D_s[i])
-                    self.fk[i, ii] = self.k[i][ii].force
-
-        KF = np.sum(KF_I, axis=1)
-        return KF
-
     def KMatrix(self, D=np.array([]), analysis=False) -> np.ndarray:
         if not hasattr(self, 'K0') or analysis:
             K = np.zeros((self.n_dof, self.n_dof))
-            kf = self.KF(D, analysis)
 
-            if self.n_dof == 1:
-                K[0, 0] = kf[0]
-            else:
-                for n in range(self.n_dof):
-                    if n == 0:
-                        K[n, n] = kf[n]+kf[n+1]
-                        K[n, n+1] = -kf[n+1]
-                    elif n == self.n_dof-1:
-                        K[n, n-1] = -kf[n]
-                        K[n, n] = kf[n]
-                    else:
-                        K[n, n-1] = -kf[n]
-                        K[n, n] = kf[n]+kf[n+1]
-                        K[n, n+1] = -kf[n+1]
-
-            if analysis:
-                self.K = K
+            for i, ki in enumerate(self.ki):
+                if ki.n1 == 0:
+                    K[ki.n2-1, ki.n2-1] += ki.k
+                else:
+                    K[ki.n1-1, ki.n1-1] += ki.k
+                    K[ki.n1-1, ki.n2-1] += -ki.k
+                    K[ki.n2-1, ki.n1-1] += -ki.k
+                    K[ki.n2-1, ki.n2-1] += ki.k
 
             return K
 
@@ -105,7 +70,11 @@ class Model:
 
     def upper_K(self):
         """最下層を除いた剛性マトリクス"""
-        kf = self.KF()
+        kf = np.zeros(len(self.ki))
+
+        for i, ki in enumerate(self.ki):
+            kf[i] = ki["k0"]
+
         K = np.zeros((self.n_dof-1, self.n_dof-1))
 
         for n in range(self.n_dof-1):
@@ -124,13 +93,26 @@ class Model:
 
         return K
 
+    @property
+    def Fk(self):
+        Fk = np.zeros((self.n_dof, 1))  # 各層現ステップのダンパー力
+
+        for _, ki in enumerate(self.ki):
+            if ki.n1 == 0:
+                Fk[ki.n2-1] += ki.force
+            else:
+                Fk[ki.n1-1] += -ki.force
+                Fk[ki.n2-1] += ki.force
+
+        return Fk
+
     def calc_C(self, K):
         if self.base_isolation:
             if self.n_dof == 1:
                 C = np.zeros((self.n_dof))
                 return C
             else:
-                K[0, 0] = self.KF()[1]
+                K[0, 0] = self.ki[1].k0
 
             # 基礎固定時
             Mw = np.diag(self.MF[1:])
@@ -145,23 +127,6 @@ class Model:
         for _, w in enumerate(w0):
             C += 2 * self.h * K / w
         return C
-
-    def update_C(self) -> np.ndarray:
-        # 初期剛性比例型
-        if self.h_type == 0:
-            if hasattr(self, 'C'):
-                return self.C
-            else:
-                self.C = self.calc_C(self.K0)
-                return self.C
-
-        # 瞬間剛性比例型
-        elif self.h_type == 1:
-            self.C = self.calc_C(self.K)
-            return self.C
-
-        else:
-            raise ValueError('h_typeの値が正しくありません。')
 
     def eig(self, M, K):
         lam, v = LA.eig(np.dot(np.linalg.inv(M), K))
@@ -178,9 +143,22 @@ class Model:
 
         return omega, vector
 
-    def update_matrix(self, D=np.array([]), analysis=False) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        self.K = self.KMatrix(D, analysis)
-        self.C = self.update_C()
+    def update_matrix(self, dis: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        # K更新
+        for i, ki in enumerate(self.ki):
+            d = np.reshape(dis, self.n_dof)
+            d1 = d[ki.n1-1] if ki.n1 != 0 else 0
+            di = d[ki.n2-1] - d1
+
+            ki.step(di)
+            self.fk[i] = ki.force
+
+        # C更新
+        if not hasattr(self, 'C') or self.h_type == 1: # 瞬間剛性比例型
+            self.C = self.calc_C(self.K)
+            return self.C
+
+        self.K = self.KMatrix()
         return self.M, self.C, self.K, self.I
 
     def matrix(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:

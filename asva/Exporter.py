@@ -31,6 +31,16 @@ class Exporter:
                 print(self.analysis.model.n_dof - n,
                       '{0:10.3f}'.format(self.analysis.resp.dis_max[self.analysis.model.n_dof - n]))
 
+            print(self.analysis.case_name, 'fu_max(kN)')
+            for n in range(self.analysis.model.n_dof):
+                print(self.analysis.model.n_dof - n,
+                      '{0:10.3f}'.format(self.analysis.resp.fu_max[self.analysis.model.n_dof - n]))
+
+            print(self.analysis.case_name, 'rat_fu_max(%)')
+            for n in range(self.analysis.model.n_dof):
+                print(self.analysis.model.n_dof - n,
+                      '{0:10.1f}'.format(self.analysis.resp.rat_fu_max[self.analysis.model.n_dof - n] * 100))
+
     def export_result_outline(self):
         if not self.result_data_dir:
             raise ValueError('ExportConfigが設定されていません。')
@@ -109,7 +119,7 @@ class Exporter:
             amp_acc_dict = {}
             amp_a_acc_dict = {}
 
-            for n in range(self.analysis.model.n_dof):
+            for n in range(self.analysis.model.amp_size):
                 amp_acc_dict['acc_' + str(n)] = self.analysis.resp.amp_acc[:, n]
                 amp_a_acc_dict['a_acc_' + str(n)] = self.analysis.resp.amp_a_acc[:, n]
 
@@ -127,7 +137,6 @@ class Exporter:
             # max
             max_dict = {
                 'storey': self.analysis.resp.storey,
-                'height': self.analysis.resp.height,
                 'a_acc_max': self.analysis.resp.a_acc_max,
                 'acc_max': self.analysis.resp.acc_max,
                 'vel_max': self.analysis.resp.vel_max,
@@ -138,9 +147,6 @@ class Exporter:
 
             for nn in range(self.analysis.max_nd):
                 max_dict['fd_max_' + str(nn)] = self.analysis.resp.fd_max[:, nn]
-
-            for nn in range(self.analysis.model.max_nk):
-                max_dict['fk_max_' + str(nn)] = self.analysis.resp.fk_max[:, nn]
 
             max_df = pd.DataFrame.from_dict(max_dict)
             max_df.to_csv(self.result_data_dir + 'max.csv')
@@ -170,8 +176,8 @@ class Exporter:
                 for nn in range(len(self.analysis.damper.d[n])):
                     th_fd_dict['fd_' + str(n) + '_' + str(nn)] = self.analysis.resp.fd[:, n, nn]
 
-                for nn in range(len(self.analysis.model.k[n])):
-                    th_fk_dict['fk_' + str(n) + '_' + str(nn)] = self.analysis.resp.fk[:, n, nn]
+                for nn, _ in enumerate(self.analysis.model.ki):
+                    th_fk_dict['fk_' + str(nn)] = self.analysis.resp.fk[:, nn]
 
             th_base_dict = {
                 'time': self.analysis.resp.time,

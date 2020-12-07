@@ -21,21 +21,24 @@ class Response:
         self.vel = np.zeros((self.analysis.resp_n_steps, self.analysis.model.n_dof))
         self.dis = np.zeros((self.analysis.resp_n_steps, self.analysis.model.n_dof))
         self.fu = np.zeros((self.analysis.resp_n_steps, self.analysis.model.n_dof))
+        self.rat_fu = np.zeros((self.analysis.resp_n_steps, self.analysis.model.n_dof))
         self.cum_dis = np.zeros((self.analysis.resp_n_steps, self.analysis.model.n_dof))
         self.fs = np.zeros((self.analysis.resp_n_steps, self.analysis.model.n_dof))
         self.fd = np.zeros((self.analysis.resp_n_steps, self.analysis.model.n_dof, self.analysis.max_nd))
-        self.fk = np.zeros((self.analysis.resp_n_steps, self.analysis.model.n_dof, self.analysis.model.max_nk))
+        self.fk = np.zeros((self.analysis.resp_n_steps, len(self.analysis.model.ki)))
 
         # Custom response
         self.cum_dis_vel = np.zeros((self.analysis.resp_n_steps, self.analysis.model.n_dof))
 
+        # amp
+        wsize = self.analysis.amplitude_config['N_W']
+        self.frequency: np.ndarray = np.array([])
+        self.amp_acc = np.zeros((wsize, self.analysis.model.n_dof))
+        self.amp_a_acc = np.zeros((wsize, self.analysis.model.n_dof))
+
     @property
     def storey(self) -> np.ndarray:
         return np.arange(self.n_dof_plus_1)
-
-    @property
-    def height(self) -> np.ndarray:
-        return np.append([0, ], self.analysis.model.height)
 
     @property
     def acc_00_max(self) -> np.ndarray:
@@ -78,6 +81,13 @@ class Response:
         return fu_max
 
     @property
+    def rat_fu_max(self) -> np.ndarray:
+        rat_fu_max = np.zeros((self.n_dof_plus_1))
+        for n in range(self.n_dof_plus_1):
+            rat_fu_max[n] = np.max(np.abs(self.rat_fu[:, n-1])) if n != 0 else 0
+        return rat_fu_max
+
+    @property
     def fs_max(self) -> np.ndarray:
         fs_max = np.zeros((self.n_dof_plus_1))
         for n in range(self.n_dof_plus_1):
@@ -92,12 +102,3 @@ class Response:
                 fd_max[n, nn] = np.max(
                     np.abs(self.fd[:, n-1, nn])) if n != 0 else 0
         return fd_max
-
-    @property
-    def fk_max(self) -> np.ndarray:
-        fk_max = np.zeros((self.n_dof_plus_1, self.analysis.model.max_nk))
-        for n in range(self.n_dof_plus_1):
-            for nn in range(self.analysis.model.max_nk):
-                fk_max[n, nn] = np.max(
-                    np.abs(self.fk[:, n-1, nn])) if n != 0 else 0
-        return fk_max

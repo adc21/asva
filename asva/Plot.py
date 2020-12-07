@@ -195,20 +195,18 @@ class Plot:
         labels = []
         x = []
         y = []
-        for n in range(self.analysis.model.n_dof):
-            for nn in range(len(self.analysis.model.k[n])):
-                labels.append(str(n) + '_' + str(nn))
+        for n, ki in enumerate(self.analysis.model.ki):
+            labels.append(str(n) + '_' + str(ki.n1) + '_' + str(ki.n2))
 
-                if n != 0:
-                    x.append(self.analysis.loader.th_df['dis_' + str(n)] - self.analysis.loader.th_df['dis_' + str(n-1)])
-                else:
-                    x.append(self.analysis.loader.th_df['dis_' + str(n)])
+            if ki.n1 != 0:
+                x.append(self.analysis.loader.th_df['dis_' + str(ki.n2-1)] - self.analysis.loader.th_df['dis_' + str(ki.n1-1)])
+            else:
+                x.append(self.analysis.loader.th_df['dis_' + str(ki.n2-1)])
 
-                y.append(self.analysis.loader.th_df['fk_' + str(n) + '_' + str(nn)])
+            y.append(self.analysis.loader.th_df['fk_' + str(n)])
 
-        if self.analysis.model.max_nk > 0:
-            self.plot('fk_loop', x, y, labels=labels, title="hysteresis loop",
-                        xlabel="dis.(m)", ylabel="force(kN)", figsize=(8, 8))
+        self.plot('fk_loop', x, y, labels=labels, title="hysteresis loop",
+                    xlabel="dis.(m)", ylabel="force(kN)", figsize=(8, 8))
 
     def a_acc_max(self):
         self.validate_max()
@@ -241,7 +239,7 @@ class Plot:
         labels = []
         x = []
         y = []
-        storey = self.analysis.exporter.data_plot_stories if self.analysis.exporter.data_plot_stories else [n for n in range(self.analysis.model.n_dof)]
+        storey = self.analysis.exporter.data_plot_stories if self.analysis.exporter.data_plot_stories else [n for n in range(self.analysis.model.amp_size)]
         for n in storey:
             labels.append(str(n))
             x.append(self.analysis.loader.amp_df['freq'])
@@ -255,7 +253,7 @@ class Plot:
         labels = []
         x = []
         y = []
-        storey = self.analysis.exporter.data_plot_stories if self.analysis.exporter.data_plot_stories else [n for n in range(self.analysis.model.n_dof)]
+        storey = self.analysis.exporter.data_plot_stories if self.analysis.exporter.data_plot_stories else [n for n in range(self.analysis.model.amp_size)]
         for n in storey:
             labels.append(str(n))
             x.append(self.analysis.loader.amp_df['freq'])

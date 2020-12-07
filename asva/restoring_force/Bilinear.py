@@ -16,10 +16,8 @@ class Bilinear(RestoringForce):
     # q：現在の内力　
     """
 
-    def __init__(self, k0, a1, f1):
-        super().__init__()
-        self.k0 = k0
-        self.k = self.k0 # 瞬間剛性
+    def __init__(self, n1: int, n2: int, k0: float, a1: float, f1: float):
+        super().__init__(n1, n2, k0)
         self.a1 = a1
         self.k2 = a1 * self.k0
         self.f1 = f1
@@ -30,7 +28,7 @@ class Bilinear(RestoringForce):
         self.q = 0
         self.q0 = 0
 
-    def step(self, dis) -> float:
+    def step(self, dis) -> None:
         # init
         self.init_step(dis)
 
@@ -82,4 +80,3 @@ class Bilinear(RestoringForce):
 
         # end
         self.end_step(self.k)
-        return self.k
