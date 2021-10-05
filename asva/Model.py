@@ -47,49 +47,37 @@ class Model:
             self.vb[i] = np.dot(v, self.b[i])
 
         for i in range(len(self.v0)):
-            if abs(np.sum(self.vb[:, i]) - 1) > 1e-5:   # 各次数の刺激関数の和が１
+            if abs(np.sum(self.vb[:, i]) - 1) > 1e-4:   # 各次数の刺激関数の和が１
                 raise ValueError('固有値解析が正しくない可能性があります。')
 
-    def KMatrix(self, D=np.array([]), analysis=False) -> np.ndarray:
-        if not hasattr(self, 'K0') or analysis:
-            K = np.zeros((self.n_dof, self.n_dof))
+    def KMatrix(self) -> np.ndarray:
+        K = np.zeros((self.n_dof, self.n_dof))
 
-            for i, ki in enumerate(self.ki):
-                if ki.n1 == 0:
-                    K[ki.n2-1, ki.n2-1] += ki.k
-                else:
-                    K[ki.n1-1, ki.n1-1] += ki.k
-                    K[ki.n1-1, ki.n2-1] += -ki.k
-                    K[ki.n2-1, ki.n1-1] += -ki.k
-                    K[ki.n2-1, ki.n2-1] += ki.k
+        for _, ki in enumerate(self.ki):
+            if ki.n1 == 0:
+                K[ki.n2-1, ki.n2-1] += ki.k
+            else:
+                K[ki.n1-1, ki.n1-1] += ki.k
+                K[ki.n1-1, ki.n2-1] += -ki.k
+                K[ki.n2-1, ki.n1-1] += -ki.k
+                K[ki.n2-1, ki.n2-1] += ki.k
 
-            return K
-
-        else:
-            return self.K0
+        return K
 
     def upper_K(self):
-        """最下層を除いた剛性マトリクス"""
-        kf = np.zeros(len(self.ki))
-
-        for i, ki in enumerate(self.ki):
-            kf[i] = ki["k0"]
-
+        """最下層を節点に持つ剛性を除いた剛性マトリクス"""
         K = np.zeros((self.n_dof-1, self.n_dof-1))
 
-        for n in range(self.n_dof-1):
-            if n == 0:
-                k2 = 0 if self.n_dof-1 == 1 else kf[n+2]
-                K[n, n] = kf[n+1]+k2
-                if self.n_dof-1 != 1:
-                    K[n, n+1] = -k2
-            elif n == self.n_dof-2:
-                K[n, n-1] = -kf[n+1]
-                K[n, n] = kf[n+1]
+        for _, ki in enumerate(self.ki):
+            if ki.n1 == 0:
+                pass
+            elif ki.n1 == 1:
+                K[ki.n2-2, ki.n2-2] += ki.k0
             else:
-                K[n, n-1] = -kf[n+1]
-                K[n, n] = kf[n+1]+kf[n+2]
-                K[n, n+1] = 0-kf[n+2]
+                K[ki.n1-2, ki.n1-2] += ki.k0
+                K[ki.n1-2, ki.n2-2] += -ki.k0
+                K[ki.n2-2, ki.n1-2] += -ki.k0
+                K[ki.n2-2, ki.n2-2] += ki.k0
 
         return K
 
@@ -145,20 +133,20 @@ class Model:
 
     def update_matrix(self, dis: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         # K更新
+        d = np.reshape(dis, self.n_dof)
         for i, ki in enumerate(self.ki):
-            d = np.reshape(dis, self.n_dof)
             d1 = d[ki.n1-1] if ki.n1 != 0 else 0
             di = d[ki.n2-1] - d1
 
             ki.step(di)
             self.fk[i] = ki.force
 
+        self.K = self.KMatrix()
+
         # C更新
         if not hasattr(self, 'C') or self.h_type == 1: # 瞬間剛性比例型
             self.C = self.calc_C(self.K)
-            return self.C
 
-        self.K = self.KMatrix()
         return self.M, self.C, self.K, self.I
 
     def matrix(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:

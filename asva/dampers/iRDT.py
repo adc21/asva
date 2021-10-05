@@ -142,7 +142,7 @@ class iRDT(Damper):
         self.end_step()
         return self.force
 
-def iRDT_MATRIX(n_dof: int, M: np.ndarray, C: np.ndarray, K: np.ndarray, I: np.ndarray, MD: np.ndarray, CD: np.ndarray, KD: np.ndarray) -> np.ndarray:
+def iRDT_MATRIX(n_dof: int, M: np.ndarray, C: np.ndarray, K: np.ndarray, I: np.ndarray, MD: np.ndarray, CD: np.ndarray, KD: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """応答倍率計算時のダンパーマトリクス（MD,CD,KDの値は１層あたり１種類のみとすること）"""
     assert MD.size == n_dof, f"MD size must be same as n_dof ${n_dof}"
 

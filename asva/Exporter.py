@@ -31,6 +31,7 @@ class Exporter:
                 print(self.analysis.model.n_dof - n,
                       '{0:10.3f}'.format(self.analysis.resp.dis_max[self.analysis.model.n_dof - n]))
 
+            """
             print(self.analysis.case_name, 'fu_max(kN)')
             for n in range(self.analysis.model.n_dof):
                 print(self.analysis.model.n_dof - n,
@@ -40,6 +41,7 @@ class Exporter:
             for n in range(self.analysis.model.n_dof):
                 print(self.analysis.model.n_dof - n,
                       '{0:10.1f}'.format(self.analysis.resp.rat_fu_max[self.analysis.model.n_dof - n] * 100))
+            """
 
     def export_result_outline(self):
         if not self.result_data_dir:

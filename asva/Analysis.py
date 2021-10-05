@@ -102,8 +102,7 @@ class Analysis:
             self.acc_00 = self.resp.acc_00[t]
             self.d_acc_00 = (self.resp.acc_00[t] - self.resp.acc_00[t-1])
 
-        self.f_0 = np.dot(self.model.M, (-1) * self.model.I * self.acc_00)
-        self.d_f_0 = np.dot(self.model.M, (-1) * self.model.I * self.d_acc_00)
+        self.d_f_0 = np.dot(self.model.M, (-1) * self.model.I * self.d_acc_00) - self.fu
         self.d_acc, self.d_vel, self.d_dis = calc_nmb(self.d_f_0, self.damper.d_fd_m, self.model.M, self.model.C, self.model.K,
                                                     self.d_acc, self.d_vel, self.d_dis, self.beta,
                                                     self.ddt)
@@ -114,9 +113,10 @@ class Analysis:
         self.dis += self.d_dis
         self.a_acc += self.d_a_acc
 
-        self.model.update_matrix(self.dis)
+        self.model.update_matrix(self.dis) # self.model.C, Kを更新
         self.damper.update_damper_force_matrix(action)  # self.damper.d_fd_mを更新
 
+        self.f_0 = np.dot(self.model.M, (-1) * self.model.I * self.acc_00)
         self.fu = np.dot(self.model.M, self.acc) + np.dot(self.model.C, self.vel) + self.model.Fk + self.damper.fd_m - self.f_0
 
         # for iterations
@@ -143,7 +143,7 @@ class Analysis:
                 self.vel = self.vel_0 + self.d_vel
                 self.dis = self.dis_0 + self.d_dis
 
-                self.model.update_matrix()
+                self.model.update_matrix(self.dis)
                 self.damper.update_damper_force_matrix(action)
                 self.fu = np.dot(self.model.M, self.acc) + np.dot(self.model.C, self.vel) + self.model.Fk + self.damper.fd_m - self.f_0
 
@@ -224,7 +224,7 @@ class Analysis:
 
         wsize = self.amplitude_config['N_W']
         size = np.size(M, 0)
-        print(M)
+
         self.model.amp_size = size
         self.resp.amp_acc = np.zeros((wsize, size))
         self.resp.amp_a_acc = np.zeros((wsize, size))
