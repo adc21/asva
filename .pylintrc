@@ -7,9 +7,5 @@ disable=
     missing-class-docstring,
     global-statement
 
-[TYPECHECK]
-generated-members=
-    torch.*
-
 [FORMAT]
 max-line-length=240

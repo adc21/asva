@@ -2,6 +2,7 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/asva.svg)](https://pypi.org/project/asva/)
 [![PyPI version](https://img.shields.io/pypi/v/asva)](https://pypi.org/pypi/asva/)
 [![Downloads](https://pepy.tech/badge/asva)](https://pepy.tech/project/asva)
+[![Documentation Status](https://readthedocs.org/projects/asva/badge/?version=latest)](https://asva.readthedocs.io/en/latest/?badge=latest)
 
 質点系による振動解析プログラム
 
@@ -13,6 +14,10 @@ asva は Python による質点系の振動解析プログラムです。現在�
 - 地震応答解析
 - 応答倍率計算
   etc.
+
+## ドキュメント
+
+詳しくは[ドキュメント](https://asva.readthedocs.io/en/latest/)を確認してください。
 
 ## 必要なもの
 
