@@ -4,6 +4,7 @@ import copy
 
 class Damper():
     def __init__(self, dt: float, Nd: float):
+        self.j = 2
         self.dt = dt
         self.Nd = Nd
         self.dis: float = 0
@@ -14,9 +15,13 @@ class Damper():
         self.acc0: float = 0
 
     def init_step(self, dis: float):
+        d_dis = dis - self.dis0
+        d_vel = self.j / self.dt * d_dis - self.j * self.vel0
+        d_acc = (self.j / self.dt)**2 * d_dis - self.j * ((self.j / self.dt) * self.vel0 + self.acc0)
+
         self.dis = dis
-        self.vel = 2 * (self.dis - self.dis0) / self.dt - self.vel0
-        self.acc = 2 * (self.vel - self.vel0) / self.dt - self.acc0
+        self.vel += d_vel
+        self.acc += d_acc
 
     def end_step(self):
         self.dis0 = copy.copy(self.dis)

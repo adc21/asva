@@ -23,20 +23,23 @@ class CASESType(TypedDict):
     START_TIME: Union[float, None]  # 地震波入力の開始時刻[s] Noneの場合は0
     END_TIME: Union[float, None]    # 地震波入力の終了時刻[s] Noneの場合は地震波の終了時刻
 
+class BaseStiffStiffnessType(TypedDict):
+    n1: int
+    n2: int
 
-class ElasticType(TypedDict):
+class ElasticType(BaseStiffStiffnessType):
     type: Literal["elastic"]
     k0: float                       # 初期剛性[kN/m]
 
 
-class BilinearType(TypedDict):
+class BilinearType(BaseStiffStiffnessType):
     type: Literal["bilinear"]
     k0: float                       # 初期剛性[kN/m]
     a1: float                       # 降伏後剛性低下率[-]
     f1: float                       # 降伏荷重[kN]
 
 
-class TrilinearType(TypedDict):
+class TrilinearType(BaseStiffStiffnessType):
     type: Literal["gyakko", "takeda", "trilinear"]
     k0: float                       # 初期剛性[kN/m]
     a1: float                       # 降伏後剛性低下率1[-]
@@ -45,7 +48,7 @@ class TrilinearType(TypedDict):
     f2: float                       # 降伏荷重2[kN]
 
 
-KIType = Union[ElasticType, BilinearType, TrilinearType, StopperType]
+KIType = Union[ElasticType, BilinearType, TrilinearType]
 
 DamperTypes = Literal["VDA", "iRDT", "VDB", "MASS", "TMD", "Stopper"]
 DamperProperties = Union[VDAType, iRDTType, MASSType, VDBType, TMDType, StopperType, None]
@@ -69,13 +72,11 @@ class AnalysisConfigType(TypedDict):
     CASES: List[CASESType]        # 解析ケースのリスト
 
     # model
-    N_DOF: int                  # 質点数
     H: float                    # 主系粘性減衰定数
     H_TYPE: Literal[0, 1]       # 0: 初期剛性比例型　1: 瞬間合成比例型
     I: List[List[float]]        # インプットする外力（NDOF×1）の行列で指定。地震波入力の場合、通常全て1。
-    HEIGHT: List[float]         # 主系の高さ[m]
     MI: List[float]             # 主系の質量[ton]
-    KI: List[List[KIType]]      # 主系の剛性[kN/m]
+    KI: List[KIType]            # 主系の剛性[kN/m]
 
     # damper
     DAMPERS: Dict[str, List[List[DamperType]]]

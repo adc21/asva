@@ -43,13 +43,11 @@ Analysis Config
         CASES: List[CASESType]        # 解析ケースのリスト
 
         # model
-        N_DOF: int                  # 質点数
         H: float                    # 主系粘性減衰定数
         H_TYPE: Literal[0, 1]       # 0: 初期剛性比例型　1: 瞬間合成比例型
         I: List[List[float]]        # インプットする外力（NDOF×1）の行列で指定。地震波入力の場合、通常全て1。
-        HEIGHT: List[float]         # 主系の高さ[m]
         MI: List[float]             # 主系の質量[ton]
-        KI: List[List[KIType]]      # 主系の剛性[kN/m]
+        KI: List[KIType]      # 主系の剛性[kN/m]
 
         # damper
         DAMPERS: Dict[str, List[List[DamperType]]]

@@ -1,4 +1,5 @@
 """データの読み込み"""
+import math
 from asva.Types import WaveType, CASESType
 
 def time_step(wave: WaveType, case_conf: CASESType):
@@ -7,8 +8,8 @@ def time_step(wave: WaveType, case_conf: CASESType):
     ddt = dt / n_div
     start_time: float = case_conf['START_TIME'] if case_conf['START_TIME'] else 0   # type: ignore
     end_time: float = case_conf['END_TIME'] if case_conf['END_TIME'] else dt * wave['NDATA'] # type: ignore
-    res_start_step = int(start_time / dt)
-    res_end_step = int(end_time / dt)
+    res_start_step = math.floor(start_time / dt)
+    res_end_step = math.floor(end_time / dt)
     res_n_steps = res_end_step - res_start_step
     start_step = res_start_step * n_div
     end_step = res_end_step * n_div

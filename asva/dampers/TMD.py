@@ -31,7 +31,7 @@ class TMD(Damper):
     def step(self, a_acc: float):
         ff = -self.md*self.Nd*a_acc
         self.acc2, self.vel2, self.dis2 = nmb(self.md*self.Nd, self.cd*self.Nd, self.kd*self.Nd, self.dt, ff, self.acc2, self.vel2, self.dis2)
-        self.force = self.kd*self.Nd*self.dis2 + self.cd*self.Nd*self.vel2
+        self.force = -self.md*(a_acc + self.acc2) * self.Nd # self.kd*self.Nd*self.dis2 + self.cd*self.Nd*self.vel2
         return self.force
 
 def TMD_MATRIX(n_dof: int, M: np.ndarray, C: np.ndarray, K: np.ndarray, I: np.ndarray, MD: np.ndarray, CD: np.ndarray, KD: np.ndarray) -> np.ndarray:

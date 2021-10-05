@@ -1,4 +1,5 @@
 import numpy as np
+from asva.Types import DamperTypes
 
 def damper_param_along_storeys(n_dof: int, damper_type: str, damper_target_param: str, dampers: list, add_all_param: bool =False) -> np.ndarray:
     """
@@ -32,7 +33,7 @@ def add_zeros_to_damper_matrix(DM: np.ndarray, size: int):
 
     return DM
 
-def damper_exists(n_dof: int, damper_type: str, dampers: list) -> bool:
+def damper_exists(n_dof: int, damper_type: DamperTypes, dampers: list) -> bool:
     for n in range(n_dof):
         num_dampers = len(dampers[n])
 

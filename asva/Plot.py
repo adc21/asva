@@ -8,7 +8,7 @@ class Plot:
     def __init__(self, analysis):
         self.analysis = analysis
 
-    def plot(self, name, x, y, labels="default", title=None, xlabel=None, ylabel=None, xlim_start=None, xlim_end=None, marker=None, top=None, right=None, bottom=None, left=None, figsize=None, plot_dir=None):
+    def plot(self, name, x, y, labels="default", title=None, xlabel=None, ylabel=None, xlim_start=None, xlim_end=None, marker=None, top=None, right=None, bottom=None, left=None, figsize=None, plot_dir=None, scalex="linear", scaley="linear"):
         if len(x) != len(y):
             raise ValueError("x,y配列の長さが異なります。")
         fig = plt.figure(figsize=figsize)
@@ -33,6 +33,9 @@ class Plot:
 
         if labels:
             plt.legend()
+
+        plt.xscale(scalex)
+        plt.yscale(scaley)
         plt.gca().set_xlim(right=right, left=left)
         plt.gca().set_ylim(top=top, bottom=bottom)
         plot_dir = plot_dir if plot_dir else self.analysis.exporter.result_plot_dir
@@ -195,20 +198,18 @@ class Plot:
         labels = []
         x = []
         y = []
-        for n in range(self.analysis.model.n_dof):
-            for nn in range(len(self.analysis.model.k[n])):
-                labels.append(str(n) + '_' + str(nn))
+        for n, ki in enumerate(self.analysis.model.ki):
+            labels.append(str(n) + '_' + str(ki.n1) + '_' + str(ki.n2))
 
-                if n != 0:
-                    x.append(self.analysis.loader.th_df['dis_' + str(n)] - self.analysis.loader.th_df['dis_' + str(n-1)])
-                else:
-                    x.append(self.analysis.loader.th_df['dis_' + str(n)])
+            if ki.n1 != 0:
+                x.append(self.analysis.loader.th_df['dis_' + str(ki.n2-1)] - self.analysis.loader.th_df['dis_' + str(ki.n1-1)])
+            else:
+                x.append(self.analysis.loader.th_df['dis_' + str(ki.n2-1)])
 
-                y.append(self.analysis.loader.th_df['fk_' + str(n) + '_' + str(nn)])
+            y.append(self.analysis.loader.th_df['fk_' + str(n)])
 
-        if self.analysis.model.max_nk > 0:
-            self.plot('fk_loop', x, y, labels=labels, title="hysteresis loop",
-                        xlabel="dis.(m)", ylabel="force(kN)", figsize=(8, 8))
+        self.plot('fk_loop', x, y, labels=labels, title="hysteresis loop",
+                    xlabel="dis.(m)", ylabel="force(kN)", figsize=(8, 8))
 
     def a_acc_max(self):
         self.validate_max()
@@ -235,33 +236,33 @@ class Plot:
         self.plot('fs_max', [self.analysis.loader.max_df['fs_max']], [self.analysis.loader.max_df['storey']], title="max shear force",
                     xlabel="max fs(kN)", ylabel="storey", marker="o", bottom=0, left=0, figsize=(8, 12))
 
-    def amp_acc(self, storey=None, xlim_start=0, xlim_end=2):
+    def amp_acc(self, storey=None, xlim_start=0, xlim_end=2, scalex="linear", scaley="linear"):
         self.validate_amp()
 
         labels = []
         x = []
         y = []
-        storey = self.analysis.exporter.data_plot_stories if self.analysis.exporter.data_plot_stories else [n for n in range(self.analysis.model.n_dof)]
+        storey = self.analysis.exporter.data_plot_stories if self.analysis.exporter.data_plot_stories else [n for n in range(self.analysis.model.amp_size)]
         for n in storey:
             labels.append(str(n))
             x.append(self.analysis.loader.amp_df['freq'])
             y.append(self.analysis.loader.amp_df['acc_' + str(n)])
 
-        self.plot('amp_acc', x, y, labels=labels, title="acc amp.", xlabel="frequency[Hz]", ylabel="amp(-)", xlim_start=xlim_start, xlim_end=xlim_end)
+        self.plot('amp_acc', x, y, labels=labels, title="acc amp.", xlabel="frequency[Hz]", ylabel="amp(-)", xlim_start=xlim_start, xlim_end=xlim_end, scalex=scalex, scaley=scaley)
 
-    def amp_a_acc(self, storey=None, xlim_start=0, xlim_end=2):
+    def amp_a_acc(self, storey=None, xlim_start=0, xlim_end=2, scalex="linear", scaley="linear"):
         self.validate_amp()
 
         labels = []
         x = []
         y = []
-        storey = self.analysis.exporter.data_plot_stories if self.analysis.exporter.data_plot_stories else [n for n in range(self.analysis.model.n_dof)]
+        storey = self.analysis.exporter.data_plot_stories if self.analysis.exporter.data_plot_stories else [n for n in range(self.analysis.model.amp_size)]
         for n in storey:
             labels.append(str(n))
             x.append(self.analysis.loader.amp_df['freq'])
             y.append(self.analysis.loader.amp_df['a_acc_' + str(n)])
 
-        self.plot('amp_a_acc', x, y, labels=labels, title="a_acc amp.", xlabel="frequency[Hz]", ylabel="amp(-)", xlim_start=xlim_start, xlim_end=xlim_end)
+        self.plot('amp_a_acc', x, y, labels=labels, title="a_acc amp.", xlabel="frequency[Hz]", ylabel="amp(-)", xlim_start=xlim_start, xlim_end=xlim_end, scalex=scalex, scaley=scaley)
 
     def cum_dis_vel(self):
         if not self.analysis.loader.th_df.empty:

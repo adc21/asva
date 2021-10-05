@@ -38,20 +38,20 @@ config: ap.AnalysisConfigType = {
     },
 
     # model
-    'N_DOF': 1,
     'BASE_ISOLATION': False,
     'H': 0.02,
     'H_TYPE': 0,
     'I': [
         [1],
     ],
-    'HEIGHT': [4],
     'MI': [100],
     'KI': [
-        [{
+        {
+            'n1': 0,
+            'n2': 1,
             'type': 'elastic',
             'k0': 4000,
-        }, ],
+        },
     ],
 
     # wave

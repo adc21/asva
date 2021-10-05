@@ -12,7 +12,8 @@ class Damper:
     def __init__(self, analysis):
         self.analysis = analysis
         self.cum_dis = np.zeros((self.analysis.model.n_dof, 1))  # 累積変位
-        self.fd_m = np.zeros((self.analysis.model.n_dof, 1))  # 外力項に加えるダンパー力増分マトリクス
+        self.fd_m = np.zeros((self.analysis.model.n_dof, 1))  # ダンパー力マトリクス
+        self.d_fd_m = np.zeros((self.analysis.model.n_dof, 1))  # 外力項に加えるダンパー力増分マトリクス
 
         self.fd0 = np.zeros((self.analysis.model.n_dof, self.analysis.max_nd))  # 各層前ステップのダンパー力
         self.fd = np.zeros((self.analysis.model.n_dof, self.analysis.max_nd))  # 各層現ステップのダンパー力
@@ -29,14 +30,17 @@ class Damper:
         self.action = action
         self.fd = self.damper_force()           # 層間ダンパーのダンパー力計算
         self.f = self.damper_force_to_mass()    # 質点に直接寄与するダンパー力計算
+        # print('f', self.fd, self.f)
         d_fd = self.fd - self.fd0
         d_f = self.f - self.f0
 
         for n in range(self.analysis.model.n_dof):
             if n == self.analysis.model.n_dof-1:
-                self.fd_m[n, 0] = np.sum(d_fd[n, :]) - np.sum(d_f[n, :])
+                self.fd_m[n, 0] = np.sum(self.fd[n, :]) - np.sum(self.f[n, :])
+                self.d_fd_m[n, 0] = np.sum(d_fd[n, :]) - np.sum(d_f[n, :])
             else:
-                self.fd_m[n, 0] = np.sum(d_fd[n, :]) - np.sum(d_fd[n+1, :]) - np.sum(d_f[n, :])
+                self.fd_m[n, 0] = np.sum(self.fd[n, :]) - np.sum(self.fd[n+1, :]) - np.sum(self.f[n, :])
+                self.d_fd_m[n, 0] = np.sum(d_fd[n, :]) - np.sum(d_fd[n+1, :]) - np.sum(d_f[n, :])
 
     def damper_force(self):
         self.fd0 = copy.copy(self.fd)
@@ -46,8 +50,6 @@ class Damper:
 
             # スカラーの層間値に変換
             d_dis = delta(np.reshape(self.analysis.dis, self.analysis.model.n_dof))[n]
-            # d_vel = delta(np.reshape(self.analysis.vel, self.analysis.model.n_dof))[n]
-            # d_acc = delta(np.reshape(self.analysis.acc, self.analysis.model.n_dof))[n]
 
             for nn in range(num_dampers):
                 # self.fd[n, nn]を返す計算
@@ -59,6 +61,9 @@ class Damper:
                 # Classの場合
                 if damper["type"] in ["VDA", "iRDT", "Stopper", "VDB", "MASS"]:
                     self.fd[n, nn] = self.d[n][nn].step(d_dis)
+
+                elif damper["type"] in ["TMD"]:
+                    pass
 
                 else:
                     raise ValueError("指定したダンパータイプが正しくありません。")
@@ -107,15 +112,33 @@ class Damper:
         iRDT_kb_params = damper_param_along_storeys(n_dof, "iRDT", "kb", self.analysis.dampers)
 
 
+        # 2種類目のiRDTを追加する場合
+        # iRDT_md_params2 = np.array([self.analysis.dampers[0][1]['d']['md']])
+        # iRDT_cd_params2 = np.array([self.analysis.dampers[0][1]['d']['cd']])
+        # iRDT_kb_params2 = np.array([self.analysis.dampers[0][1]['d']['kb']])
+
+
         # マトリクスの大きさが変化する場合こちらで計算
-        M, C, K, I, TMD_C_matrix, TMD_K_matrix = TMD_MATRIX(n_dof, M, C, K, I, TMD_md_params, TMD_cd_params, TMD_kd_params)
-        M, C, K, I, iRDT_matrix = iRDT_MATRIX(n_dof, M, C, K, I, iRDT_md_params, iRDT_cd_params, iRDT_kb_params)
+        # TMD
+        if damper_exists(n_dof, 'TMD', self.analysis.dampers):
+            M, C, K, I, TMD_C_matrix, TMD_K_matrix = TMD_MATRIX(n_dof, M, C, K, I, TMD_md_params, TMD_cd_params, TMD_kd_params)
+        else:
+            TMD_C_matrix, TMD_K_matrix = np.zeros(np.shape(M)), np.zeros(np.shape(M))
+
+        # iRDT
+        if damper_exists(n_dof, 'iRDT', self.analysis.dampers):
+            M, C, K, I, iRDT_matrix = iRDT_MATRIX(n_dof, M, C, K, I, iRDT_md_params, iRDT_cd_params, iRDT_kb_params)
+            # M, C, K, I, iRDT_matrix2 = iRDT_MATRIX(n_dof, M, C, K, I, iRDT_md_params2, iRDT_cd_params2, iRDT_kb_params2)
+        else:
+            iRDT_matrix = np.zeros(np.shape(M))
+
         size = np.size(M, 0)
 
         # マトリクスを拡張する前に計算したダンパーマトリクスにはゼロを追加して拡張し直す
         TMD_C_matrix = add_zeros_to_damper_matrix(TMD_C_matrix, size)
         TMD_K_matrix = add_zeros_to_damper_matrix(TMD_K_matrix, size)
         iRDT_matrix = add_zeros_to_damper_matrix(iRDT_matrix, size)
+        # iRDT_matrix2 = add_zeros_to_damper_matrix(iRDT_matrix2, size)
 
         # マトリクスの大きさが変化しない場合こちらで計算
         VDB_matrix = VDB_MATRIX(n_dof, size, VDB_params)
@@ -129,6 +152,6 @@ class Damper:
         C = C + VDB_matrix + VDA_matrix + TMD_C_matrix
 
         # wに比例しないもの
-        K = K + iRDT_matrix + TMD_K_matrix
+        K = K + iRDT_matrix + TMD_K_matrix # + iRDT_matrix2
 
         return M, C, K, I

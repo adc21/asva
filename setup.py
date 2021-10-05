@@ -16,7 +16,7 @@ def _requires_from_file(filename):
 
 setup(
     name="asva",
-    version="0.2.0",
+    version="0.3.1",
     url='https://github.com/adc21/asva',
     author='adc21',
     author_email='aseismic.device@gmail.com',
